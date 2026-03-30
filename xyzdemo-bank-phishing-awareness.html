@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XYZDemo Bank – Internet Banking</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a237e;
+    --navy-dark: #0d1257;
+    --blue: #1565c0;
+    --blue-light: #1976d2;
+    --accent: #e65100;
+    --gold: #f9a825;
+    --white: #ffffff;
+    --gray-bg: #f4f6fb;
+    --gray-border: #dce3f0;
+    --text: #1a1a2e;
+    --text-muted: #5a6a8a;
+    --danger: #c62828;
+    --success: #2e7d32;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans', sans-serif;
+    background: var(--gray-bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── TOP STRIP ── */
+  .top-strip {
+    background: var(--navy-dark);
+    color: #aab4d8;
+    font-size: 11.5px;
+    padding: 5px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .top-strip a { color: #aab4d8; text-decoration: none; margin-left: 14px; }
+  .top-strip a:hover { color: var(--gold); }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.35);
+    position: relative;
+    z-index: 10;
+  }
+
+  .logo-area { display: flex; align-items: center; gap: 14px; }
+  .logo-circle {
+    width: 50px; height: 50px;
+    background: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Noto Serif', serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--navy);
+    letter-spacing: -1px;
+    border: 2px solid var(--gold);
+    flex-shrink: 0;
+  }
+  .logo-text { line-height: 1.2; }
+  .logo-text .bank-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: .5px;
+  }
+  .logo-text .bank-sub {
+    font-size: 10px;
+    color: #90caf9;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .header-right { display: flex; align-items: center; gap: 16px; }
+  .header-right .lang-btn {
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.3);
+    color: white;
+    padding: 5px 14px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .header-right .login-btn {
+    background: var(--gold);
+    border: none;
+    color: var(--navy-dark);
+    padding: 7px 20px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  /* ── NAV ── */
+  nav {
+    background: white;
+    border-bottom: 3px solid var(--navy);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,.08);
+  }
+  nav a {
+    display: block;
+    padding: 14px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -3px;
+    transition: all .2s;
+  }
+  nav a:hover, nav a.active {
+    color: var(--navy);
+    border-bottom-color: var(--accent);
+    background: #f0f4ff;
+  }
+
+  /* ── TICKER / ALERT BAND ── */
+  .ticker-bar {
+    background: #fff8e1;
+    border-bottom: 1px solid #ffe082;
+    padding: 6px 24px;
+    font-size: 12px;
+    color: #5d4037;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow: hidden;
+  }
+  .ticker-label {
+    background: var(--accent);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-weight: 700;
+    font-size: 11px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .ticker-text { white-space: nowrap; animation: ticker 18s linear infinite; }
+  @keyframes ticker {
+    0% { transform: translateX(60vw); }
+    100% { transform: translateX(-100%); }
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .main {
+    max-width: 1200px;
+    margin: 24px auto;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: 300px 1fr 240px;
+    gap: 20px;
+  }
+
+  /* ── CARD STYLES ── */
+  .card {
+    background: white;
+    border-radius: 6px;
+    border: 1px solid var(--gray-border);
+    box-shadow: 0 1px 4px rgba(0,0,0,.07);
+    overflow: hidden;
+  }
+  .card-header {
+    background: var(--navy);
+    color: white;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .3px;
+  }
+  .card-header.accent { background: var(--accent); }
+  .card-body { padding: 16px; }
+
+  /* ── LOGIN FORM ── */
+  .login-form { display: flex; flex-direction: column; gap: 12px; }
+  .login-form label { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 3px; display: block; }
+  .login-form input {
+    width: 100%;
+    border: 1px solid var(--gray-border);
+    border-radius: 4px;
+    padding: 8px 11px;
+    font-size: 13px;
+    outline: none;
+    transition: border .2s;
+  }
+  .login-form input:focus { border-color: var(--blue); }
+  .login-form .submit-btn {
+    background: var(--navy);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 4px;
+    letter-spacing: .3px;
+    transition: background .2s;
+  }
+  .login-form .submit-btn:hover { background: var(--blue); }
+  .login-note { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 4px; }
+
+  /* ── SERVICES GRID ── */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .service-tile {
+    background: white;
+    border: 1px solid var(--gray-border);
+    border-radius: 6px;
+    padding: 16px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  }
+  .service-tile:hover {
+    border-color: var(--blue);
+    box-shadow: 0 3px 12px rgba(21,101,192,.15);
+    transform: translateY(-2px);
+  }
+  .service-tile .icon {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+  .service-tile .label {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--navy);
+    line-height: 1.3;
+  }
+
+  /* ── MIDDLE COLUMN CARDS ── */
+  .middle-col { display: flex; flex-direction: column; gap: 20px; }
+
+  /* ── BANNER ── */
+  .hero-banner {
+    background: linear-gradient(120deg, var(--navy) 0%, #283593 60%, #1565c0 100%);
+    border-radius: 6px;
+    padding: 28px 28px 22px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,.2);
+  }
+  .hero-banner::after {
+    content: '';
+    position: absolute;
+    right: -30px; top: -30px;
+    width: 180px; height: 180px;
+    background: rgba(255,255,255,.06);
+    border-radius: 50%;
+  }
+  .hero-banner h2 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+  .hero-banner p { font-size: 13px; color: #90caf9; max-width: 360px; line-height: 1.6; }
+  .hero-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--navy-dark);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    letter-spacing: .5px;
+  }
+
+  /* ── RIGHT SIDEBAR ── */
+  .sidebar { display: flex; flex-direction: column; gap: 16px; }
+  .sidebar .quick-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--gray-border);
+    background: white;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--navy);
+    cursor: pointer;
+    transition: all .2s;
+    text-decoration: none;
+  }
+  .sidebar .quick-link:hover {
+    background: #e8edf8;
+    border-color: var(--blue);
+  }
+  .sidebar .quick-link .ql-icon { font-size: 18px; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--navy-dark);
+    color: #8899bb;
+    font-size: 11.5px;
+    padding: 20px 24px;
+    margin-top: 32px;
+    text-align: center;
+    line-height: 1.8;
+  }
+  footer a { color: #90caf9; text-decoration: none; margin: 0 8px; }
+
+  /* ══════════════════════════════════════════
+     PHISHING DIALOG OVERLAY
+  ══════════════════════════════════════════ */
+  #overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.65);
+    backdrop-filter: blur(3px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #phish-dialog {
+    background: white;
+    border-radius: 8px;
+    width: 480px;
+    max-width: 92vw;
+    box-shadow: 0 24px 80px rgba(0,0,0,.5);
+    overflow: hidden;
+    animation: popIn .35s cubic-bezier(.34,1.4,.64,1) both;
+  }
+  @keyframes popIn {
+    from { transform: scale(.8) translateY(40px); opacity: 0; }
+    to { transform: scale(1) translateY(0); opacity: 1; }
+  }
+
+  .dialog-header {
+    background: var(--danger);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .dialog-header .dh-icon { font-size: 24px; }
+  .dialog-header .dh-titles { flex: 1; }
+  .dialog-header .dh-super {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #ffcdd2;
+    text-transform: uppercase;
+  }
+  .dialog-header .dh-main {
+    font-size: 15px;
+    font-weight: 700;
+    color: white;
+  }
+
+  .dialog-body { padding: 22px 22px 16px; }
+
+  .alert-badge {
+    background: #fff3e0;
+    border: 1px solid #ffb74d;
+    border-left: 4px solid var(--accent);
+    border-radius: 4px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .alert-badge .ab-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .alert-badge p { font-size: 13px; line-height: 1.6; color: #4e2a00; }
+  .alert-badge strong { color: var(--danger); }
+
+  .dialog-msg { font-size: 13px; line-height: 1.7; color: #333; }
+  .dialog-msg .highlight {
+    background: #fff3e0;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  /* RED FLAGS LIST */
+  .red-flags {
+    background: #fafafa;
+    border: 1px dashed #e0e0e0;
+    border-radius: 5px;
+    padding: 12px 14px;
+    margin-top: 14px;
+    font-size: 12px;
+    color: #555;
+  }
+  .red-flags .rf-title {
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+    color: var(--danger);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .red-flags ul { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .red-flags ul li::before { content: '🚩 '; }
+
+  .dialog-footer {
+    padding: 14px 22px;
+    background: #f5f5f5;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .dialog-footer .skip-btn {
+    background: none;
+    border: none;
+    font-size: 12px;
+    color: #999;
+    cursor: pointer;
+  }
+  .dialog-footer .next-btn {
+    background: var(--navy);
+    color: white;
+    border: none;
+    padding: 9px 22px;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background .2s;
+  }
+  .dialog-footer .next-btn:hover { background: var(--blue); }
+
+  /* ── REVEAL SCREEN ── */
+  #reveal-dialog {
+    background: white;
+    border-radius: 8px;
+    width: 520px;
+    max-width: 92vw;
+    box-shadow: 0 24px 80px rgba(0,0,0,.5);
+    overflow: hidden;
+    animation: popIn .35s cubic-bezier(.34,1.4,.64,1) both;
+    display: none;
+  }
+
+  .reveal-header {
+    background: var(--success);
+    padding: 18px 24px;
+    text-align: center;
+  }
+  .reveal-header .rh-icon { font-size: 42px; margin-bottom: 6px; }
+  .reveal-header h2 { color: white; font-size: 18px; font-weight: 700; }
+  .reveal-header p { color: #c8e6c9; font-size: 12px; margin-top: 4px; }
+
+  .reveal-body { padding: 22px 24px; }
+  .law-box {
+    background: #e8f5e9;
+    border: 1px solid #a5d6a7;
+    border-left: 4px solid var(--success);
+    border-radius: 5px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+  }
+  .law-box .lb-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--success);
+    margin-bottom: 6px;
+  }
+  .law-box p { font-size: 13px; line-height: 1.7; color: #1b5e20; }
+
+  .tips-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .tip-card {
+    background: #f8f9ff;
+    border: 1px solid var(--gray-border);
+    border-radius: 5px;
+    padding: 12px;
+    font-size: 12px;
+    color: #333;
+    line-height: 1.5;
+  }
+  .tip-card .tc-icon { font-size: 20px; margin-bottom: 5px; }
+  .tip-card strong { color: var(--navy); display: block; margin-bottom: 3px; }
+
+  .reveal-footer {
+    padding: 14px 24px;
+    background: #f5f5f5;
+    border-top: 1px solid #eee;
+    text-align: center;
+  }
+  .reveal-footer .close-btn {
+    background: var(--success);
+    color: white;
+    border: none;
+    padding: 10px 32px;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .reveal-footer .close-btn:hover { background: #1b5e20; }
+  .reveal-footer .edu-note {
+    font-size: 11px;
+    color: #999;
+    margin-top: 8px;
+  }
+
+</style>
+</head>
+<body>
+
+<!-- TOP STRIP -->
+<div class="top-strip">
+  <span>🔒 Secure Banking Portal | <b>FICTIONAL DEMO</b> – XYZDemo Bank</span>
+  <div>
+    <a href="#">Contact Us</a>
+    <a href="#">Help</a>
+    <a href="#">Locate Branch</a>
+    <a href="#">Downloads</a>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo-area">
+    <div class="logo-circle">XYZ</div>
+    <div class="logo-text">
+      <div class="bank-name">XYZDemo Bank</div>
+      <div class="bank-sub">Internet Banking — Educational Demo</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="lang-btn">🌐 English</button>
+    <button class="login-btn">Personal Banking</button>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="active">Home</a>
+  <a href="#">Accounts</a>
+  <a href="#">Transfers</a>
+  <a href="#">Loans</a>
+  <a href="#">Cards</a>
+  <a href="#">Investments</a>
+  <a href="#">Insurance</a>
+  <a href="#">e-Services</a>
+</nav>
+
+<!-- TICKER -->
+<div class="ticker-bar">
+  <span class="ticker-label">NOTICE</span>
+  <span class="ticker-text">📢 Never share your OTP, password, or account details with anyone. XYZDemo Bank never asks for your PIN on a call. | Always verify the website URL before logging in. | Report suspicious activity to 1800-XXX-XXXX (toll-free).</span>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- LEFT: LOGIN -->
+  <div>
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-header">🔐 Personal Internet Banking</div>
+      <div class="card-body">
+        <div class="login-form">
+          <div>
+            <label>Username / Customer ID</label>
+            <input type="text" placeholder="Enter Username">
+          </div>
+          <div>
+            <label>Password</label>
+            <input type="password" placeholder="Enter Password">
+          </div>
+          <button class="submit-btn">LOGIN →</button>
+          <p class="login-note">🔒 256-bit SSL Encrypted | Secured Session</p>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header accent">⚡ Quick Actions</div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
+        <a href="#" style="font-size:12.5px;color:var(--blue);text-decoration:none;">📝 New Account Opening</a>
+        <a href="#" style="font-size:12.5px;color:var(--blue);text-decoration:none;">🔑 Forgot Password?</a>
+        <a href="#" style="font-size:12.5px;color:var(--blue);text-decoration:none;">📱 Register Mobile Banking</a>
+        <a href="#" style="font-size:12.5px;color:var(--blue);text-decoration:none;">💳 Apply for Credit Card</a>
+        <a href="#" style="font-size:12.5px;color:var(--blue);text-decoration:none;">📊 Check Loan Eligibility</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- MIDDLE -->
+  <div class="middle-col">
+    <div class="hero-banner">
+      <span class="hero-badge">⭐ TRUSTED BANKING SINCE 1994</span>
+      <h2>Welcome to XYZDemo Internet Banking</h2>
+      <p>Manage your finances securely from anywhere. 24×7 access to accounts, transfers, bill payments, and more.</p>
+    </div>
+
+    <div class="services-grid">
+      <div class="service-tile"><div class="icon">💸</div><div class="label">Fund Transfer</div></div>
+      <div class="service-tile"><div class="icon">📱</div><div class="label">Mobile Recharge</div></div>
+      <div class="service-tile"><div class="icon">🧾</div><div class="label">Bill Payments</div></div>
+      <div class="service-tile"><div class="icon">🏠</div><div class="label">Home Loans</div></div>
+      <div class="service-tile"><div class="icon">📈</div><div class="label">Fixed Deposits</div></div>
+      <div class="service-tile"><div class="icon">🛡️</div><div class="label">Insurance</div></div>
+      <div class="service-tile"><div class="icon">📊</div><div class="label">Mutual Funds</div></div>
+      <div class="service-tile"><div class="icon">💼</div><div class="label">Demat Account</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">🔔 Important Announcements</div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:10px;">
+        <div style="border-left:3px solid var(--accent);padding-left:10px;font-size:12.5px;">
+          <b>Security Alert:</b> Beware of phishing SMS/emails impersonating XYZDemo Bank. Never click unknown links.
+        </div>
+        <div style="border-left:3px solid var(--blue);padding-left:10px;font-size:12.5px;">
+          <b>New Feature:</b> UPI Lite now available for instant micro-payments under ₹500.
+        </div>
+        <div style="border-left:3px solid var(--success);padding-left:10px;font-size:12.5px;">
+          <b>Maintenance:</b> Scheduled downtime on Sunday 2:00 AM – 4:00 AM IST.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT SIDEBAR -->
+  <div class="sidebar">
+    <div class="card">
+      <div class="card-header">🔗 Quick Links</div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:6px;padding:10px;">
+        <a class="quick-link" href="#"><span class="ql-icon">💰</span> Account Balance</a>
+        <a class="quick-link" href="#"><span class="ql-icon">📤</span> NEFT / RTGS</a>
+        <a class="quick-link" href="#"><span class="ql-icon">🏦</span> Branch Locator</a>
+        <a class="quick-link" href="#"><span class="ql-icon">📞</span> Customer Care</a>
+        <a class="quick-link" href="#"><span class="ql-icon">📃</span> e-Statement</a>
+        <a class="quick-link" href="#"><span class="ql-icon">🔒</span> Block Card</a>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" style="background:#b71c1c;">⚠️ Fraud Helpline</div>
+      <div class="card-body" style="font-size:12.5px;line-height:1.8;color:#333;">
+        <b>Toll Free:</b><br>1800-XXX-XXXX<br>
+        <b>Email:</b><br>fraud@xyzdemobank.fake<br><br>
+        <span style="color:var(--danger);font-size:11px;font-weight:600;">Report fraud immediately to prevent loss.</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2024 XYZDemo Bank Ltd. — <b>THIS IS A FICTIONAL EDUCATIONAL DEMO. NOT A REAL BANK.</b></p>
+  <p><a href="#">Privacy Policy</a><a href="#">Terms</a><a href="#">Grievance</a><a href="#">RBI Guidelines</a><a href="#">DICGC</a></p>
+</footer>
+
+<!-- ══════════ PHISHING OVERLAY ══════════ -->
+<div id="overlay">
+
+  <!-- STEP 1: FAKE PHISHING ALERT (the bait) -->
+  <div id="phish-dialog">
+    <div class="dialog-header">
+      <span class="dh-icon">🚨</span>
+      <div class="dh-titles">
+        <div class="dh-super">Urgent — Action Required</div>
+        <div class="dh-main">Your Account Has Been Flagged</div>
+      </div>
+    </div>
+    <div class="dialog-body">
+      <div class="alert-badge">
+        <span class="ab-icon">⚠️</span>
+        <p>
+          <strong>ALERT: Your bank account is currently under review by the Reserve Bank of India (RBI).</strong>
+          Suspicious activity has been detected. To avoid account suspension, you must transfer your funds immediately to a designated safe account.
+        </p>
+      </div>
+      <div class="dialog-msg">
+        Please provide your <span class="highlight">OTP</span>, <span class="highlight">account PIN</span>, and
+        <span class="highlight">transfer ₹__ to safe account</span> within the next
+        <span class="highlight">15 minutes</span> or your account will be <b>permanently frozen</b>.
+        <br><br>
+        Contact our "Compliance Officer" at: <span class="highlight">+91-98XXXXXXXX</span>
+      </div>
+
+      <div class="red-flags">
+        <div class="rf-title">🔍 Spot the Red Flags (hover to reveal)</div>
+        <ul>
+          <li>Urgent language designed to create panic</li>
+          <li>"RBI" or "Government" name-dropping for false authority</li>
+          <li>Asking you to transfer money to a "safe account"</li>
+          <li>Requesting OTP / PIN over a dialog / call</li>
+          <li>Countdown timer to pressure immediate action</li>
+        </ul>
+      </div>
+    </div>
+    <div class="dialog-footer">
+      <button class="skip-btn">Dismiss</button>
+      <button class="next-btn" onclick="showReveal()">
+        Continue →
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 2: EDUCATIONAL REVEAL -->
+  <div id="reveal-dialog">
+    <div class="reveal-header">
+      <div class="rh-icon">🎓</div>
+      <h2>You Just Witnessed a Phishing Attack!</h2>
+      <p>Here's what really happened — and how to stay protected</p>
+    </div>
+    <div class="reveal-body">
+      <div class="law-box">
+        <div class="lb-title">⚖️ Legal Consequence — IT Act, 2000 (India)</div>
+        <p>
+          What you just saw is a <b>textbook bank phishing scam</b>. Under the <b>Information Technology Act, 2000</b>
+          (Sections 66C and 66D), creating fake bank websites or impersonating financial institutions to defraud users
+          constitutes <b>cyber fraud and identity theft</b> — punishable with up to <b>3 years imprisonment</b>
+          and a fine of up to <b>₹1 lakh</b>. The RBI and real banks <b>NEVER</b> ask you to transfer money or share
+          your OTP/PIN to protect your account.
+        </p>
+      </div>
+
+      <p style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:10px;">🛡️ How to Stay Safe — Golden Rules:</p>
+      <div class="tips-grid">
+        <div class="tip-card"><div class="tc-icon">🔗</div><strong>Check the URL</strong>Real bank URLs use HTTPS and the correct domain. Fake sites use lookalike domains.</div>
+        <div class="tip-card"><div class="tc-icon">🤐</div><strong>Never Share OTP/PIN</strong>No bank, RBI, or government official will ever ask for this.</div>
+        <div class="tip-card"><div class="tc-icon">😤</div><strong>Resist Urgency</strong>Scammers create panic. Real banks give time. Pause before acting.</div>
+        <div class="tip-card"><div class="tc-icon">📞</div><strong>Call Officially</strong>If in doubt, call your bank's official toll-free number — never a number given in a message.</div>
+      </div>
+    </div>
+    <div class="reveal-footer">
+      <button class="close-btn" onclick="closeOverlay()">✅ Got It — I'll Stay Safe!</button>
+      <p class="edu-note">🎓 This was a controlled educational demo. XYZDemo Bank is entirely fictional. No real data was collected.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function showReveal() {
+    document.getElementById('phish-dialog').style.display = 'none';
+    const reveal = document.getElementById('reveal-dialog');
+    reveal.style.display = 'block';
+  }
+  function closeOverlay() {
+    document.getElementById('overlay').style.opacity = '0';
+    document.getElementById('overlay').style.transition = 'opacity .4s';
+    setTimeout(() => document.getElementById('overlay').style.display = 'none', 400);
+  }
+</script>
+</body>
+</html>
